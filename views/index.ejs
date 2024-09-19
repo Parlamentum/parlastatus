@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minecraft Server Monitor</title>
+    <style>
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: center;
+        }
+        .running {
+            background-color: #c8e6c9;
+        }
+        .stopped {
+            background-color: #ffccbc;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center;">Minecraft Server Status</h1>
+    <table>
+        <tr>
+            <th>Server Name</th>
+            <th>Status</th>
+            <th>Last Checked</th>
+        </tr>
+        <% for(let id in serverStatus) { %>
+            <tr class="<%= serverStatus[id].status %>">
+                <td><%= serverStatus[id].name %></td>
+                <td><%= serverStatus[id].status %></td>
+                <td><%= new Date(serverStatus[id].lastChecked).toLocaleString() %></td>
+            </tr>
+        <% } %>
+    </table>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('update', (data) => {
+            location.reload();
+        });
+
+        socket.on('alert', (data) => {
+            if (confirm(`Server ${data.server} has been down for over 5 minutes!`)) {
+                // Play alert sound
+                let audio = new Audio('/alert.mp3');
+                audio.play();
+            }
+        });
+    </script>
+</body>
+</html>

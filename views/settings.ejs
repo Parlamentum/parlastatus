@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Settings</title>
+</head>
+<body>
+    <h1>Settings</h1>
+    <form id="settingsForm">
+        <label>Refresh Interval (ms):</label>
+        <input type="number" name="refreshInterval" value="<%= settings.refreshInterval %>"><br><br>
+        <label>Alert Sound:</label>
+        <input type="checkbox" name="alertSound" <% if(settings.alertSound) { %>checked<% } %>><br><br>
+        <label>Popup Alerts:</label>
+        <input type="checkbox" name="popupAlerts" <% if(settings.popupAlerts) { %>checked<% } %>><br><br>
+        <button type="submit">Save</button>
+    </form>
+    <script>
+        document.getElementById('settingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const data = {
+                refreshInterval: parseInt(this.refreshInterval.value),
+                alertSound: this.alertSound.checked,
+                popupAlerts: this.popupAlerts.checked
+            };
+            fetch('/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(response => response.json())
+              .then(data => alert('Settings saved'));
+        });
+    </script>
+</body>
+</html>
